@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Записи в блоге</h1>
+{% for item in lessons%}
+<div class="col-md6 border rounded">
+    <h2>{{item.title}}</h2>
+    <div>
+        {{item.content}}
+    </div>
+    <div class="text_block">
+        Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
+
+        <div class="text_block2">{{item.rate}}</div>
+    </div>
+</div>
+{% endfor %}
+<div align="center">{{visits}}</div>
+{% endblock %}
