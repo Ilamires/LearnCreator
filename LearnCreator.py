@@ -3,6 +3,8 @@ from data1 import db_session
 from forms.user import RegisterForm, LoginForm
 from data1.users import User
 from data1.lessons import Lesson
+from forms.lesson import Content, Text
+from wtforms import StringField, TextAreaField
 import datetime
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
@@ -76,6 +78,21 @@ def login():
 def logout():
     logout_user()
     return redirect("/")
+
+
+@app.route('/create_lesson')
+@login_required
+def edit_news():
+    return render_template('content.html', title='создание новости')
+
+
+@app.route('/button/')
+def button():
+    content = Content()
+    text = Text()
+    content.content.append(text)
+    print(content.content)
+    return render_template('content.html', title='создание новости', content=content.content)
 
 
 def main():

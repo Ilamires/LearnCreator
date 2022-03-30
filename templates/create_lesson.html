@@ -18,7 +18,14 @@
                         float: right;
                         display: inline;
                         }
-
+        .button_text {
+                        position: fixed;
+                        right: 2%;
+                        bottom: 2%;
+                        padding: 10px;
+                        background: #ffffff;
+                        border: 1px solid #333;
+                        }
 
 
     </style>
@@ -26,9 +33,9 @@
 <body>
 <header>
     <nav class="navbar navbar-light bg-light">
-        <a class="navbar-brand" href="#">Наше приложение</a>
+        <a class="navbar-brand" href="../">Назад</a>
         {% if current_user.is_authenticated %}
-        <a class="navbar-brand" href="/create_lesson">Добавить новость</a>
+        <a class="navbar-brand">Создание новости</a>
         <a class="navbar-brand" href="/logout">{{ current_user.name }}</a>
         {% else %}
         <p>
@@ -40,6 +47,7 @@
 </header>
 <!-- Begin page content -->
 <main role="main" class="container">
+    <a class="button_text" href="/button">Добавить текст</a>
     {% block content %}{% endblock %}
 </main>
 </body>
