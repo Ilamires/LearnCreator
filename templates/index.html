@@ -11,8 +11,9 @@
     <div class="text_block">
         Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
 
-        <div class="text_block2">{{item.rate}}</div>
+        <div class="text_block2">{{item.rate}} &#9733</div>
     </div>
+    <a href="/lesson/{{ item.id }}">Посмотреть</a>
 </div>
 {% endfor %}
 <div align="center">{{visits}}</div>

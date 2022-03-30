@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, make_response, request, session
+from flask import Flask, render_template, redirect, make_response, request, session, abort
 from data1 import db_session
 from forms.user import RegisterForm, LoginForm
 from data1.users import User
@@ -76,6 +76,15 @@ def login():
 def logout():
     logout_user()
     return redirect("/")
+
+
+@app.route('/lesson/<int:id>')
+@login_required
+def edit_news(id):
+    db_sess = db_session.create_session()
+    lesson = db_sess.query(Lesson).filter(Lesson.id == id).first()
+
+    return render_template('lesson.html', lesson=lesson)
 
 
 def main():

@@ -12,7 +12,8 @@
         .text_block {
                         float: left;
                         display: inline;
-                        width: 100%
+                        width: 100%;
+                        padding-right: 20px
                         }
         .text_block2 {
                         float: right;
@@ -21,15 +22,17 @@
 
 
 
+
     </style>
 </head>
 <body>
 <header>
     <nav class="navbar navbar-light bg-light">
-        <a class="navbar-brand" href="#">Наше приложение</a>
+        <a class="navbar-brand" href="http://127.0.0.1:5000/">Главная страница</a>
         {% if current_user.is_authenticated %}
         <a class="navbar-brand" href="/add_news">Добавить новость</a>
-        <a class="navbar-brand" href="/logout">{{ current_user.name }}</a>
+        <a class="navbar-brand">{{ current_user.name }}</a>
+        <a class="navbar-brand" href="/logout">Выйти</a>
         {% else %}
         <p>
             <a class="btn btn-primary " href="/register">Зарегистрироваться</a>
