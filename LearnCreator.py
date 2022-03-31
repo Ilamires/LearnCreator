@@ -3,7 +3,7 @@ from data1 import db_session
 from forms.user import RegisterForm, LoginForm
 from data1.users import User
 from data1.lessons import Lesson
-from forms.lesson import Content, Text
+from forms.lesson import Content, Arr
 from wtforms import StringField, TextAreaField
 import datetime
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
@@ -86,13 +86,16 @@ def edit_news():
     return render_template('content.html', title='создание новости')
 
 
-@app.route('/button/')
+@app.route('/button/', methods=['POST'])
 def button():
+    arr_content = Arr()
+    for i in range(len(arr_content.arr)):
+        arr_content.arr[i].text.data = request.form['text' + str(i)]
+    print(str(request.form) + "------------------- POST")
     content = Content()
-    text = Text()
-    content.content.append(text)
-    print(content.content)
-    return render_template('content.html', title='создание новости', content=content.content)
+    content.text.name = "text" + str(len(arr_content.arr))
+    arr_content.arr.append(content)
+    return render_template('content.html', title='создание новости', content=arr_content.arr)
 
 
 def main():

@@ -5,8 +5,8 @@ from wtforms.validators import DataRequired
 
 
 class Content(FlaskForm):
-    content = []
+    text = TextAreaField("Новый абзац")
 
 
-class Text(FlaskForm):
-    text = TextAreaField("test")
+class Arr(FlaskForm):
+    arr = []
