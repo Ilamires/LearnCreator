@@ -12,7 +12,7 @@ class Lesson(SqlAlchemyBase):
                            primary_key=True, autoincrement=True)
     title = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     content = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    rate = sqlalchemy.Column(sqlalchemy.Integer, nullable=True)
+    rate = sqlalchemy.Column(sqlalchemy.Float, nullable=True)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                      default=datetime.datetime.now)
 

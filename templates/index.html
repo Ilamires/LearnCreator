@@ -1,7 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Записи в блоге</h1>
+<br>
+<form action="" method="post">
+    {{ search.search(class="form-control") }}
+    {{ search.select(type="submit", class="btn btn-primary") }}
+    {% for error in search.search.errors %}
+    <p class="alert alert-danger" role="alert">
+        {{ error }}
+    </p>
+    {% endfor %}
+</form>
+<h1>Популярное</h1>
 {% for item in lessons%}
 <div class="col-md6 border rounded">
     <h2>{{item.title}}</h2>

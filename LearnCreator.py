@@ -1,6 +1,7 @@
-from flask import Flask, render_template, redirect, make_response, request, session, abort
+from flask import Flask, render_template, redirect, request
 from data1 import db_session
 from forms.user import RegisterForm, LoginForm
+from forms.search import SearchForm
 from data1.users import User
 from data1.lessons import Lesson
 import datetime
@@ -20,15 +21,25 @@ def load_user(user_id):
     return db_sess.query(User).get(user_id)
 
 
-@app.route("/")
+@app.route("/", methods=['GET', 'POST'])
 def index():
     db_sess = db_session.create_session()
-    if current_user.is_authenticated:
-        lessons = db_sess.query(Lesson).filter(
-            Lesson.user == current_user)
+    search = SearchForm()
+    if request.method == "POST":
+        lessons = db_sess.query(Lesson).filter(Lesson.title.like(f'%{search.search.data}%')).limit(5)
     else:
-        lessons = db_sess.query(Lesson)
-    return render_template("index.html", lessons=lessons)
+        lessons = db_sess.query(Lesson).limit(5)
+    print(lessons.rate)
+    return render_template("index.html", lessons=lessons, search=search)
+
+
+@app.route("/results/<string:result>", methods=['GET', 'POST'])
+def searching(result):
+    db_sess = db_session.create_session()
+    search = SearchForm()
+
+    lessons = db_sess.query(Lesson).filter(result == Lesson.title)
+    return render_template("index.html", lessons=lessons, search=search)
 
 
 @app.route('/register', methods=['GET', 'POST'])
