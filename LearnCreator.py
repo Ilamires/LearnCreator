@@ -29,7 +29,6 @@ def index():
         lessons = db_sess.query(Lesson).filter(Lesson.title.like(f'%{search.search.data}%')).limit(5)
     else:
         lessons = db_sess.query(Lesson).limit(5)
-    print(lessons.rate)
     return render_template("index.html", lessons=lessons, search=search)
 
 
