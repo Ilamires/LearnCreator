@@ -18,13 +18,12 @@
     <div>
         {{item.content}}
     </div>
-    <div class="text">
+    <div>
         Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
-
-        <div class="text2">{{item.rate}} &#9733</div>
+        {{item.rate}} &#9733
     </div>
     <a href="/lesson/{{ item.id }}">Посмотреть</a>
 </div>
 {% endfor %}
-<div align="center">{{visits}}</div>
+    <a href="/limit">{{ search.further(type="submit", class="btn btn-primary") }}</a>
 {% endblock %}

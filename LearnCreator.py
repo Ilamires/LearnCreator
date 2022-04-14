@@ -4,6 +4,7 @@ from forms.user import RegisterForm, LoginForm
 from forms.search import SearchForm
 from data1.users import User
 from data1.lessons import Lesson
+from data1.favourites import Favourites
 import datetime
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
@@ -13,6 +14,7 @@ app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(
     days=365)
 login_manager = LoginManager()
 login_manager.init_app(app)
+limit = 5
 
 
 @login_manager.user_loader
@@ -23,22 +25,25 @@ def load_user(user_id):
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
+    global limit
     db_sess = db_session.create_session()
     search = SearchForm()
     if request.method == "POST":
-        lessons = db_sess.query(Lesson).filter(Lesson.title.like(f'%{search.search.data}%')).limit(5)
+        limit = 5
+        lessons = db_sess.query(Lesson).filter(Lesson.title.like(f'%{search.search.data}%') | Lesson.title.like(
+            '%' + str(search.search.data).capitalize() + '%') | Lesson.title.like(
+            '%' + str(search.search.data).lower() + '%') | Lesson.title.like(
+            '%' + str(search.search.data).upper() + '%')).order_by(-Lesson.rate).limit(limit)
     else:
-        lessons = db_sess.query(Lesson).limit(5)
+        lessons = db_sess.query(Lesson).order_by(-Lesson.rate).limit(limit)
     return render_template("index.html", lessons=lessons, search=search)
 
 
-@app.route("/results/<string:result>", methods=['GET', 'POST'])
-def searching(result):
-    db_sess = db_session.create_session()
-    search = SearchForm()
-
-    lessons = db_sess.query(Lesson).filter(result == Lesson.title)
-    return render_template("index.html", lessons=lessons, search=search)
+@app.route('/limit')
+def lim():
+    global limit
+    limit += 5
+    return redirect("/")
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -89,11 +94,9 @@ def logout():
 
 
 @app.route('/lesson/<int:id>')
-@login_required
 def edit_news(id):
     db_sess = db_session.create_session()
     lesson = db_sess.query(Lesson).filter(Lesson.id == id).first()
-
     return render_template('lesson.html', lesson=lesson)
 
 
