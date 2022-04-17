@@ -59,6 +59,10 @@ def reqister():
             return render_template('register.html', title='Регистрация',
                                    form=form,
                                    message="Такой пользователь уже есть")
+        if db_sess.query(User).filter(User.name == form.name.data).first():
+            return render_template('register.html', title='Регистрация',
+                                   form=form,
+                                   message="Это имя уже занято")
         user = User(
             name=form.name.data,
             email=form.email.data,
@@ -91,6 +95,13 @@ def login():
 def logout():
     logout_user()
     return redirect("/")
+
+
+@app.route('/profile/<string:name>')
+def watch_profile(name):
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.name == name).first()
+    return render_template('profile.html', user=user)
 
 
 @app.route('/lesson/<int:id>')
