@@ -26,6 +26,14 @@
                         background: #ffffff;
                         border: 1px solid #333;
                         }
+        .img_text {
+                        position: fixed;
+                        right: 15%;
+                        bottom: 2%;
+                        padding: 10px;
+                        background: #ffffff;
+                        border: 1px solid #333;
+                        }
 
 
     </style>
@@ -47,10 +55,10 @@
 </header>
 <!-- Begin page content -->
 <main role="main" class="container">
-        <form action="/button/" method="post">
+        <form action="/button/" method="post" enctype="multipart/form-data">
             {% block content %}{% endblock %}
             <input class="button_text" type="submit" value="Добавить текст">
-            <!-- <a class="button_text" href="/button/">Добавить текст</a> -->
+            <input class="img_text" type="submit" value="Добавить изображение">
         </form>
 </main>
 </body>

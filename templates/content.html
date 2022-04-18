@@ -3,7 +3,16 @@
 {% block content %}
         <h1>test</h1>
         {% for item in content %}
+        {% if item.type == "text" %}
         <label for="about">{{ item.text.label }}</label>><br>
         {{ item.text(class="form-control") }}<br>
+        {% else %}
+        {% if item.img_name != "" %}
+        <img src="{{ url_for('static', filename=item.img_name) }}"/><br>
+        {% else %}
+        {{ item.img }}<br>
+        <input type=submit value=Upload><br>
+        {% endif %}
+        {% endif %}
         {% endfor %}
 {% endblock %}
