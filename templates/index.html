@@ -19,11 +19,19 @@
         {{item.content}}
     </div>
     <div>
-        Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
+        Автор - <a href="/profile/{{ item.user.name }}">{{item.user.name}}</a>, Дата написания - {{item.created_date}}
         {{item.rate}} &#9733
     </div>
-    <a href="/lesson/{{ item.id }}">Посмотреть</a>
+    <div class="text3"><a href="/lesson/{{ item.id }}">Посмотреть</a>
+        {% if current_user.is_authenticated and current_user.id!=item.user_id%}
+        {% if item.id in favourites.id%}
+        <a class="text1" href="/delete_favourites/{{ item.id }}">Удалить из избранного</a>
+        {% else %}
+        <a class="text1" href="/add_favourites/{{ item.id }}">Добавить в избранное</a>
+        {% endif %}
+        {% endif %}
+    </div>
 </div>
 {% endfor %}
-    <a href="/limit">{{ search.further(type="submit", class="btn btn-primary") }}</a>
+<a href="/limit">{{ search.further(type="submit", class="btn btn-primary") }}</a>
 {% endblock %}
