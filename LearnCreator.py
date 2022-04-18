@@ -28,7 +28,7 @@ def index():
     global limit
     db_sess = db_session.create_session()
     search = SearchForm()
-    favourites = db_sess.query(Favourites).filter(Favourites.user_id == current_user.id)
+    favourites_ids = [x.id for x in db_sess.query(Favourites.id).distinct()]
     if request.method == "POST":
         limit = 5
         lessons = db_sess.query(Lesson).filter(Lesson.title.like(f'%{search.search.data}%') | Lesson.title.like(
@@ -37,7 +37,7 @@ def index():
             '%' + str(search.search.data).upper() + '%')).order_by(-Lesson.rate).limit(limit)
     else:
         lessons = db_sess.query(Lesson).order_by(-Lesson.rate).limit(limit)
-    return render_template("index.html", lessons=lessons, search=search, favourites=favourites)
+    return render_template("index.html", lessons=lessons, search=search, favourites_ids=favourites_ids)
 
 
 @app.route('/limit')

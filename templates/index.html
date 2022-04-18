@@ -24,7 +24,7 @@
     </div>
     <div class="text3"><a href="/lesson/{{ item.id }}">Посмотреть</a>
         {% if current_user.is_authenticated and current_user.id!=item.user_id%}
-        {% if item.id in favourites.id%}
+        {% if item.id in favourites_ids%}
         <a class="text1" href="/delete_favourites/{{ item.id }}">Удалить из избранного</a>
         {% else %}
         <a class="text1" href="/add_favourites/{{ item.id }}">Добавить в избранное</a>
