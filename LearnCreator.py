@@ -15,6 +15,7 @@ app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(
 login_manager = LoginManager()
 login_manager.init_app(app)
 limit = 5
+profile = 'your_lessons'
 
 
 @login_manager.user_loader
@@ -56,6 +57,16 @@ def add_favourites(id):
     db_sess.add(favourite)
     db_sess.commit()
     return redirect("/")
+
+
+@app.route('/your_lessons')
+def your_les():
+    return redirect(f"/profile/{user_now}")
+
+
+@app.route('/your_favourites')
+def your_fav():
+    return redirect(f"/profile/{user_now}")
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -111,8 +122,10 @@ def logout():
 
 @app.route('/profile/<string:name>')
 def watch_profile(name):
+    global user_now
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.name == name).first()
+    user_now = user.name
     return render_template('profile.html', user=user)
 
 
