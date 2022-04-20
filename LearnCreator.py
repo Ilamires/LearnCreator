@@ -30,7 +30,6 @@ def index():
     db_sess = db_session.create_session()
     search = SearchForm()
     favourites_ids = [x.lesson_id for x in db_sess.query(Favourites.lesson_id).distinct()]
-    print(favourites_ids)
     if request.method == "POST":
         limit = 5
         lessons = db_sess.query(Lesson).filter(Lesson.title.like(f'%{search.search.data}%') | Lesson.title.like(
