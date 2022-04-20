@@ -13,6 +13,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 limit = 5
 profile = 'your_lessons'
+user_now = ''
 
 
 @login_manager.user_loader
@@ -125,6 +126,9 @@ def logout():
 def watch_profile(name):
     global limit
     global user_now
+    global profile
+    if name != user_now:
+        profile = 'your_lessons'
     limit = 5
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.name == name).first()
