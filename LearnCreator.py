@@ -61,11 +61,15 @@ def add_favourites(id):
 
 @app.route('/your_lessons')
 def your_les():
+    global profile
+    profile = 'your_lessons'
     return redirect(f"/profile/{user_now}")
 
 
 @app.route('/your_favourites')
 def your_fav():
+    global profile
+    profile = 'your_favourites'
     return redirect(f"/profile/{user_now}")
 
 
@@ -126,7 +130,7 @@ def watch_profile(name):
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.name == name).first()
     user_now = user.name
-    return render_template('profile.html', user=user)
+    return render_template('profile.html', user=user, profile=profile)
 
 
 @app.route('/lesson/<int:id>')
