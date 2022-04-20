@@ -5,4 +5,21 @@
     <a href="/your_lessons" class="url">Созданные уроки</a><br>
     <a href="/your_favourites" class="url">Избранное</a>
 </div>
+
+{% for item in lessons%}
+<div class="col-md6 border rounded">
+    <h2>{{item.title}}</h2>
+    <div>
+        {{item.content}}
+    </div>
+    <div>
+        Автор - <a href="/profile/{{ item.user.name }}">{{item.user.name}}</a>, Дата написания -
+        {{item.created_date}}
+        {{item.rate}} &#9733
+    </div>
+    <div class="text3"><a href="/lesson/{{ item.id }}">Посмотреть</a>
+    </div>
+</div>
+{% endfor %}
+
 {% endblock %}

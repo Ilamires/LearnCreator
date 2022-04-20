@@ -29,7 +29,8 @@ def index():
     global limit
     db_sess = db_session.create_session()
     search = SearchForm()
-    favourites_ids = [x.id for x in db_sess.query(Favourites.id).distinct()]
+    favourites_ids = [x.lesson_id for x in db_sess.query(Favourites.lesson_id).distinct()]
+    print(favourites_ids)
     if request.method == "POST":
         limit = 5
         lessons = db_sess.query(Lesson).filter(Lesson.title.like(f'%{search.search.data}%') | Lesson.title.like(
@@ -126,11 +127,20 @@ def logout():
 
 @app.route('/profile/<string:name>')
 def watch_profile(name):
+    global limit
     global user_now
+    limit = 5
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.name == name).first()
     user_now = user.name
-    return render_template('profile.html', user=user, profile=profile)
+    db_sess = db_session.create_session()
+    if profile == 'your_lessons':
+        lessons = db_sess.query(Lesson).filter(Lesson.user_id == user.id).order_by(-Lesson.rate).limit(limit)
+    else:
+        favourites_ids = [x.lesson_id for x in
+                          db_sess.query(Favourites.lesson_id).filter(Favourites.user_id == current_user.id).distinct()]
+        lessons = db_sess.query(Lesson).filter(Lesson.id.in_(favourites_ids)).order_by(-Lesson.rate).limit(limit)
+    return render_template('profile.html', user=user, profile=profile, lessons=lessons)
 
 
 @app.route('/lesson/<int:id>')
