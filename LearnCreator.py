@@ -5,13 +5,10 @@ from forms.search import SearchForm
 from data1.users import User
 from data1.lessons import Lesson
 from data1.favourites import Favourites
-import datetime
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
-app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(
-    days=365)
 login_manager = LoginManager()
 login_manager.init_app(app)
 limit = 5
@@ -137,7 +134,7 @@ def watch_profile(name):
         lessons = db_sess.query(Lesson).filter(Lesson.user_id == user.id).order_by(-Lesson.rate).limit(limit)
     else:
         favourites_ids = [x.lesson_id for x in
-                          db_sess.query(Favourites.lesson_id).filter(Favourites.user_id == current_user.id).distinct()]
+                          db_sess.query(Favourites.lesson_id).filter(Favourites.user_id == user.id).distinct()]
         lessons = db_sess.query(Lesson).filter(Lesson.id.in_(favourites_ids)).order_by(-Lesson.rate).limit(limit)
     return render_template('profile.html', user=user, profile=profile, lessons=lessons)
 
