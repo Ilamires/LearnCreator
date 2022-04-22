@@ -12,8 +12,10 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)
 limit = 5
-profile = 'your_lessons'
+FirstLesson = 0
+search_now = ''
 user_now = ''
+lessons_now_count = 0
 
 
 @login_manager.user_loader
@@ -24,25 +26,48 @@ def load_user(user_id):
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
-    global limit
+    global limit, FirstLesson, search_now, lessons_now_count
     db_sess = db_session.create_session()
     search = SearchForm()
     favourites_ids = [x.lesson_id for x in db_sess.query(Favourites.lesson_id).distinct()]
     if request.method == "POST":
+        FirstLesson = 0
         limit = 5
-        lessons = db_sess.query(Lesson).filter(Lesson.title.like(f'%{search.search.data}%') | Lesson.title.like(
-            '%' + str(search.search.data).capitalize() + '%') | Lesson.title.like(
-            '%' + str(search.search.data).lower() + '%') | Lesson.title.like(
-            '%' + str(search.search.data).upper() + '%')).order_by(-Lesson.rate).limit(limit)
-    else:
-        lessons = db_sess.query(Lesson).order_by(-Lesson.rate).limit(limit)
-    return render_template("index.html", lessons=lessons, search=search, favourites_ids=favourites_ids)
+        search_now = search.search.data
+    lessons = db_sess.query(Lesson).filter(Lesson.title.like(f'%{search_now}%') | Lesson.title.like(
+        '%' + str(search_now).capitalize() + '%') | Lesson.title.like(
+        '%' + str(search_now).lower() + '%') | Lesson.title.like(
+        '%' + str(search_now).upper() + '%')).order_by(-Lesson.rate)[FirstLesson:limit]
+    lessons_now_count = db_sess.query(Lesson).filter(Lesson.title.like(f'%{search_now}%') | Lesson.title.like(
+        '%' + str(search_now).capitalize() + '%') | Lesson.title.like(
+        '%' + str(search_now).lower() + '%') | Lesson.title.like(
+        '%' + str(search_now).upper() + '%')).count()
+    return render_template("index.html", lessons=lessons, search=search, favourites_ids=favourites_ids,
+                           FirstLesson=FirstLesson, lessons_now_count=lessons_now_count, limit=limit)
 
 
 @app.route('/limit')
 def lim():
-    global limit
+    global limit, FirstLesson
+    FirstLesson += 5
     limit += 5
+    return redirect("/")
+
+
+@app.route('/back')
+def back():
+    global limit, FirstLesson
+    FirstLesson -= 5
+    limit -= 5
+    return redirect("/")
+
+
+@app.route('/main')
+def main():
+    global limit, FirstLesson, search_now
+    search_now = ''
+    FirstLesson = 0
+    limit = 5
     return redirect("/")
 
 
@@ -73,6 +98,10 @@ def your_fav():
 
 @app.route('/register', methods=['GET', 'POST'])
 def reqister():
+    global limit, FirstLesson, search_now
+    search_now = ''
+    FirstLesson = 0
+    limit = 5
     form = RegisterForm()
     if form.validate_on_submit():
         if form.password.data != form.password_again.data:
@@ -102,6 +131,10 @@ def reqister():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    global limit, FirstLesson, search_now
+    search_now = ''
+    FirstLesson = 0
+    limit = 5
     form = LoginForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
@@ -124,11 +157,11 @@ def logout():
 
 @app.route('/profile/<string:name>')
 def watch_profile(name):
-    global limit
-    global user_now
-    global profile
+    global limit, user_now, profile, FirstLesson, search_now
     if name != user_now:
         profile = 'your_lessons'
+    search_now = ''
+    FirstLesson = 0
     limit = 5
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.name == name).first()
