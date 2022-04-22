@@ -8,17 +8,17 @@
 <div style="padding-top: 40px">
     {% for item in lessons%}
     <div class="col-md6 border rounded" style="float: right; width: 55%">
-        <h2 style="float: left; width: 50%">{{item.title}}</h2>
+        <h2 style="float: left; width: 50%; padding-left: 10px">{{item.title}}</h2>
         <h3 style="float: right; width: 50%; padding-right: 20px" align="right">
-            <a href="/profile/{{ item.user.name }}">{{item.user.name}}</a>
+            <a href="/profile/{{ item.user.name }}" class="url1">{{item.user.name}}</a>
         </h3>
-        <div style="float:left; width: 100%">
+        <div style="float:left; width: 100%; padding-left: 10px">
             {{item.content}}
         </div>
         <div style="float: right; width: 40%; padding-right: 20px" align="right">
             {{item.rate}} &#9733
         </div>
-        <div class="text3"><a href="/lesson/{{ item.id }}">Посмотреть</a>
+        <div class="text3" style="padding-left: 10px"><a href="/lesson/{{ item.id }}">Посмотреть</a>
             {% if profile=="your_favourites"%}
             <a class="text1" href="/delete_favourites/{{ item.id }}">Удалить из избранного</a>
             {% endif %}

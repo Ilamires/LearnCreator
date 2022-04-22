@@ -3,8 +3,10 @@
 {% block content %}
 <br>
 <form action="" method="post">
-    {{ search.search(class="form-control") }}
-    {{ search.select(type="submit", class="btn btn-primary") }}
+    <div style="float: left; width: 93.5%">{{ search.search(class="form-control") }}</div>
+    <div style="float: right; width: 6.5%">{{ search.select(type="submit", class="btn btn-primary")
+        }}
+    </div>
     {% for error in search.search.errors %}
     <p class="alert alert-danger" role="alert">
         {{ error }}
@@ -14,20 +16,20 @@
 <h1>Популярное</h1>
 {% for item in lessons%}
 <div class="col-md6 border rounded">
-    <h2 style="float: left; width: 50%">{{item.title}}</h2>
+    <h2 style="float: left; width: 50%; padding-left: 10px">{{item.title}}</h2>
     <h3 style="float: right; width: 50%; padding-right: 20px" align="right">
-        <a href="/profile/{{ item.user.name }}">{{item.user.name}}</a>
+        <a href="/profile/{{ item.user.name }}" class="url1">{{item.user.name}}</a>
     </h3>
-    <div style="float:left; width: 100%">
+    <div style="float:left; width: 100%; padding-left: 10px">
         {{item.content}}
     </div>
-    <div>
+    <div style="padding-left: 10px">
         Дата написания - {{item.created_date}}
     </div>
     <div style="float: right; width: 40%; padding-right: 20px" align="right">
         {{item.rate}} &#9733
     </div>
-    <div class="text3"><a href="/lesson/{{ item.id }}">Посмотреть</a>
+    <div class="text3" style="padding-left: 10px"><a href="/lesson/{{ item.id }}">Посмотреть</a>
         {% if current_user.is_authenticated and current_user.id!=item.user_id%}
         {% if item.id in favourites_ids%}
         <a class="text1" href="/delete_favourites/{{ item.id }}">Удалить из избранного</a>
