@@ -12,7 +12,9 @@ class Lesson(SqlAlchemyBase):
                            primary_key=True, autoincrement=True)
     title = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     content = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    rate = sqlalchemy.Column(sqlalchemy.Float, nullable=True)
+    added_to_favorites_count = sqlalchemy.Column(sqlalchemy.Integer, default=0)
+    rate = sqlalchemy.Column(sqlalchemy.String, default='-')
+    rates = sqlalchemy.Column(sqlalchemy.String, default='[]')
     created_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                      default=datetime.datetime.now)
 

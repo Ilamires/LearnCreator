@@ -16,10 +16,14 @@ class User(SqlAlchemyBase, UserMixin):
     email = sqlalchemy.Column(sqlalchemy.String,
                               index=True, unique=True, nullable=True)
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    created_date = sqlalchemy.Column(sqlalchemy.DateTime,
-                                     default=datetime.datetime.now)
+    created_lessons_count = sqlalchemy.Column(sqlalchemy.Integer, default=0)
+    favourites_lessons_count = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     lessons = orm.relation("Lesson", back_populates='user')
     favourites = orm.relation("Favourites", back_populates='user')
+    rate = sqlalchemy.Column(sqlalchemy.String, default='-')
+    rates = sqlalchemy.Column(sqlalchemy.String, default='[]')
+    created_date = sqlalchemy.Column(sqlalchemy.DateTime,
+                                     default=datetime.datetime.now)
 
     def __repr__(self):
         return f'<User> {self.id} {self.name} {self.email}'
