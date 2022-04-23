@@ -11,11 +11,15 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)
-limit = 5
-FirstLesson = 0
-search_now = ''
 user_now = ''
 lessons_now_count = 0
+
+
+def start_parameters():
+    return ['', 0, 5]
+
+
+search_now, FirstLesson, limit = start_parameters()
 
 
 @login_manager.user_loader
@@ -65,9 +69,17 @@ def back():
 @app.route('/main')
 def main():
     global limit, FirstLesson, search_now
-    search_now = ''
-    FirstLesson = 0
-    limit = 5
+    search_now, FirstLesson, limit = start_parameters()
+    return redirect("/")
+
+
+@app.route('/delete_favourites/<int:id>')
+def delete_favourites(id):
+    db_sess = db_session.create_session()
+    user_id = current_user.id
+    favourite = db_sess.query(Favourites).filter(user_id == Favourites.user_id, id == Favourites.lesson_id).first()
+    db_sess.delete(favourite)
+    db_sess.commit()
     return redirect("/")
 
 
@@ -99,9 +111,7 @@ def your_fav():
 @app.route('/register', methods=['GET', 'POST'])
 def reqister():
     global limit, FirstLesson, search_now
-    search_now = ''
-    FirstLesson = 0
-    limit = 5
+    search_now, FirstLesson, limit = start_parameters()
     form = RegisterForm()
     if form.validate_on_submit():
         if form.password.data != form.password_again.data:
@@ -132,9 +142,7 @@ def reqister():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     global limit, FirstLesson, search_now
-    search_now = ''
-    FirstLesson = 0
-    limit = 5
+    search_now, FirstLesson, limit = start_parameters()
     form = LoginForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
@@ -160,9 +168,7 @@ def watch_profile(name):
     global limit, user_now, profile, FirstLesson, search_now
     if name != user_now:
         profile = 'your_lessons'
-    search_now = ''
-    FirstLesson = 0
-    limit = 5
+    search_now, FirstLesson, limit = start_parameters()
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.name == name).first()
     user_now = user.name
