@@ -1,7 +1,20 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="text_url" style="float: left; height: 482px">
+<br>
+<form action="" method="post">
+    <div style="float: left; width: 93.5%">{{ search.search(class="form-control") }}</div>
+    <div style="float: right; width: 6.5%">{{ search.select(type="submit", class="btn btn-primary")
+        }}
+    </div>
+    {% for error in search.search.errors %}
+    <p class="alert alert-danger" role="alert">
+        {{ error }}
+    </p>
+    {% endfor %}
+</form>
+<br>
+<div class="text_url" style="float: left">
     <a href="/your_lessons" class="url">Созданные уроки</a><br>
     <a href="/your_favourites" class="url">Избранное</a>
 </div>
@@ -15,16 +28,26 @@
         <div style="float:left; width: 100%; padding-left: 10px">
             {{item.content}}
         </div>
-        <div style="float: right; width: 40%; padding-right: 20px" align="right">
+        <div style="float: right; width: 10%; font-size: 21px; padding-right: 20px" align="right">
+            {% if item.rates_count>0%}
             {{item.rate}} &#9733
+            {% else %}
+            - &#9733
+            {% endif %}
         </div>
-        <div class="text3" style="padding-left: 10px"><a href="/lesson/{{ item.id }}">Посмотреть</a>
+        <div class="text3" style="font-size: 21px; padding-left: 10px; width: 80%">
+            <a href="/lesson/{{ item.id }}">Посмотреть</a>
             {% if profile=="your_favourites"%}
-            <a class="text1" href="/delete_favourites/{{ item.id }}">Удалить из избранного</a>
+            <a class="text1" href="/delete_favourites_profile/{{ item.id }}">Удалить из избранного</a>
             {% endif %}
         </div>
     </div>
+    {% endfor %}
+    {% if lessons_now_count>limit%}
+    <a href="/limit_profile">{{ search.further(type="submit", class="btn btn-primary") }}</a>
+    {% endif %}
+    {% if FirstLesson>0%}
+    <a href="/back_profile">{{ search.back(type="submit", class="btn btn-primary") }}</a>
+    {% endif %}
 </div>
-{% endfor %}
-
 {% endblock %}
