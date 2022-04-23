@@ -3,10 +3,10 @@
 {% block content %}
 <br>
 <form action="" method="post">
-        <div style="float: left; width: 93.5%">{{ search.search(class="form-control") }}</div>
-        <div style="float: right; width: 6.5%">{{ search.select(type="submit", class="btn btn-primary")
-            }}
-        </div>
+    <div style="float: left; width: 93.5%">{{ search.search(class="form-control") }}</div>
+    <div style="float: right; width: 6.5%">{{ search.select(type="submit", class="btn btn-primary")
+        }}
+    </div>
     {% for error in search.search.errors %}
     <p class="alert alert-danger" role="alert">
         {{ error }}
@@ -26,16 +26,23 @@
     <div style="padding-left: 10px">
         Дата написания - {{item.created_date}}
     </div>
-    <div style="float: right; width: 40%; padding-right: 20px" align="right">
+    <div style="float: right; width: 40%; font-size: 21px; padding-right: 20px" align="right">
+        {% if item.rates_count>0%}
         {{item.rate}} &#9733
-    </div>
-    <div class="text3" style="padding-left: 10px"><a href="/lesson/{{ item.id }}">Посмотреть</a>
-        {% if current_user.is_authenticated and current_user.id!=item.user_id%}
-        {% if item.id in favourites_ids%}
-        <a class="text1" href="/delete_favourites/{{ item.id }}">Удалить из избранного</a>
         {% else %}
-        <a class="text1" href="/add_favourites/{{ item.id }}">Добавить в избранное</a>
+        - &#9733
         {% endif %}
+    </div>
+    <div class="text3" style="font-size: 21px; padding-left: 10px">
+        <div>
+            <a href="/lesson/{{ item.id }}">Посмотреть</a>
+            {% if current_user.is_authenticated and current_user.id!=item.user_id%}
+            {% if item.id in favourites_ids%}
+            <a class="text1" href="/delete_favourites/{{ item.id }}">Удалить из избранного</a>
+            {% else %}
+            <a class="text1" href="/add_favourites/{{ item.id }}">Добавить в избранное</a>
+            {% endif %}
+        </div>
         {% endif %}
     </div>
 </div>

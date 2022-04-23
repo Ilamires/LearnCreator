@@ -6,6 +6,7 @@ from forms.search import SearchForm
 from data1.users import User
 from data1.lessons import Lesson
 from data1.favourites import Favourites
+from data1.rates import Rates
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
 app = Flask(__name__)
