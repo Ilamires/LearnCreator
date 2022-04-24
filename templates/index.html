@@ -42,15 +42,15 @@
             {% else %}
             <a class="text1" href="/add_favourites/{{ item.id }}">Добавить в избранное</a>
             {% endif %}
+            {% endif %}
         </div>
-        {% endif %}
     </div>
 </div>
 {% endfor %}
 {% if lessons_now_count>limit%}
 <a href="/limit">{{ search.further(type="submit", class="btn btn-primary") }}</a>
 {% endif %}
-{% if FirstLesson>0%}
+{% if FirstResult>0%}
 <a href="/back">{{ search.back(type="submit", class="btn btn-primary") }}</a>
 {% endif %}
 {% endblock %}

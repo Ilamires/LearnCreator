@@ -37,8 +37,12 @@
         </div>
         <div class="text3" style="font-size: 21px; padding-left: 10px; width: 80%">
             <a href="/lesson/{{ item.id }}">Посмотреть</a>
-            {% if profile=="your_favourites"%}
+            {% if current_user.is_authenticated and current_user.id!=item.user_id%}
+            {% if item.id in my_favourites_ids%}
             <a class="text1" href="/delete_favourites_profile/{{ item.id }}">Удалить из избранного</a>
+            {% else %}
+            <a class="text1" href="/add_favourites_profile/{{ item.id }}">Добавить в избранное</a>
+            {% endif %}
             {% endif %}
         </div>
     </div>
@@ -46,7 +50,7 @@
     {% if lessons_now_count>limit%}
     <a href="/limit_profile">{{ search.further(type="submit", class="btn btn-primary") }}</a>
     {% endif %}
-    {% if FirstLesson>0%}
+    {% if FirstResult>0%}
     <a href="/back_profile">{{ search.back(type="submit", class="btn btn-primary") }}</a>
     {% endif %}
 </div>

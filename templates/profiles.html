@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<br>
+<form action="" method="post">
+    <div style="float: left; width: 93.5%">{{ search.search(class="form-control") }}</div>
+    <div style="float: right; width: 6.5%">{{ search.select(type="submit", class="btn btn-primary")
+        }}
+    </div>
+    {% for error in search.search.errors %}
+    <p class="alert alert-danger" role="alert">
+        {{ error }}
+    </p>
+    {% endfor %}
+</form>
+<h1>Популярное</h1>
+{% for item in users%}
+<div class="col-md6 border rounded">
+    <h2 style="padding-left: 10px"><a href="/profile/{{ item.name }}" class="url1">{{item.name}}</a></h2>
+    <div style="padding-left: 10px">
+        {{item.about}}
+    </div>
+    <div style="padding-left: 10px">
+        Дата создания аккаунта - {{item.created_date}}
+    </div>
+    <div style="float: right; width: 5%; font-size: 21px; padding-right: 20px" align="right">
+        {% if item.rates_count>0%}
+        {{item.rate}} &#9733
+        {% else %}
+        - &#9733
+        {% endif %}
+    </div>
+    <div style="font-size: 21px; padding-left: 10px">
+        уроков создано: {{item.created_lessons_count}}, в избранное добавлено: {{item.favourites_lessons_count}}
+    </div>
+</div>
+{% endfor %}
+{% if users_now_count>limit%}
+<a href="/limit">{{ search.further(type="submit", class="btn btn-primary") }}</a>
+{% endif %}
+{% if FirstResult>0%}
+<a href="/back">{{ search.back(type="submit", class="btn btn-primary") }}</a>
+{% endif %}
+{% endblock %}

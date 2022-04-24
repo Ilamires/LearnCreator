@@ -21,6 +21,7 @@ class User(SqlAlchemyBase, UserMixin):
     lessons = orm.relation("Lesson", back_populates='user')
     favourites = orm.relation("Favourites", back_populates='user')
     rate = sqlalchemy.Column(sqlalchemy.Float, default=0)
+    rates_count = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                      default=datetime.datetime.now)
 
