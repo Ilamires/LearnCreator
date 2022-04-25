@@ -107,6 +107,11 @@ def back_profile():
     return redirect(f"/profile/{user_now}")
 
 
+@app.route('/estimate/<int:id>', methods=['GET', 'POST'])
+def estimate(id):
+    return redirect('/')
+
+
 @app.route('/main')
 def main():
     global limit, FirstResult, search_now, user_now
