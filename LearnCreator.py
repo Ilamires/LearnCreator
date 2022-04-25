@@ -2,13 +2,16 @@ from flask import Flask, render_template, redirect, request
 from data1 import db_session
 from forms.user import RegisterForm, LoginForm
 from forms.search import SearchForm
+from forms.lesson import Content, Arr, Image
 from data1.users import User
 from data1.lessons import Lesson
 from data1.favourites import Favourites
 from data1.rates import Rates
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
-app = Flask(__name__)
+UPLOAD_FOLDER = '/static/img/'
+app = Flask(__name__, static_url_path='/static')
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -275,10 +278,40 @@ def watch_profile(name):
 
 
 @app.route('/lesson/<int:id>')
-def edit_news(id):
+def watch_lesson(id):
     db_sess = db_session.create_session()
     lesson = db_sess.query(Lesson).filter(Lesson.id == id).first()
     return render_template('lesson.html', lesson=lesson)
+
+
+@app.route('/create_lesson')
+@login_required
+def edit_lesson():
+    return render_template('content.html', title='создание новости')
+
+
+@app.route('/button/', methods=['GET', 'POST'])
+def create_lesson():
+    arr_content = Arr()
+    if request.method == 'POST':
+        print(str(request.form) + "------------------- POST")
+        for i in range(len(arr_content.arr)):
+            if arr_content.arr[i].type != "img":
+                arr_content.arr[i].text.data = request.form['text' + str(i)]
+            else:
+                if arr_content.arr[i].img_name == "":
+                    file = request.files["file" + str(i)]
+                    if file.filename != "":
+                        arr_content.arr[i].img_name = "img/" + str(file.filename)
+                        print(arr_content.arr[i].img_name)
+                        file.save("static/img/" + str(file.filename))
+        img = Image()
+        img.img.name = "file" + str(len(arr_content.arr))
+        arr_content.arr.append(img)
+        content = Content()
+        content.text.name = "text" + str(len(arr_content.arr))
+        arr_content.arr.append(content)
+    return render_template('content.html', title='создание новости', content=arr_content.arr)
 
 
 def main():

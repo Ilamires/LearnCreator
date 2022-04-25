@@ -9,44 +9,33 @@
           crossorigin="anonymous">
     <title>{{title}}</title>
     <style>
-        .text1 {
-                        word-spacing: 0px
+        .text_block {
+                        float: left;
+                        display: inline;
+                        width: 100%
                         }
-        .text_url {
-                        padding-top: 50px;
-                        padding-left: 40px;
-                        font-size: 300%;
-                        width: 40%;
-                        text-align: center
+        .text_block2 {
+                        float: right;
+                        display: inline;
                         }
-        .search_str {
-            border: 4px solid #000000;
-            border-radius: 5px
-            }
-        a.url:hover {
-            border: 4px solid #000000;
-            border-radius: 20px;
-            text-decoration: none;
-            color: #000000
-        }
-        .url {
-          text-decoration: none;
-          color: #000000;
-        }
-        a.url1:hover {
-            text-decoration: none;
-            color: #000000
-        }
-        .url1 {
-          text-decoration: none;
-          color: #000000;
-        }
-        .text3 {
-                        word-spacing: 20px
+        .button_text {
+                        position: fixed;
+                        right: 2%;
+                        bottom: 2%;
+                        padding: 10px;
+                        background: #ffffff;
+                        border: 1px solid #333;
                         }
-        .text4 {
-                        padding-bottom: 5px
+        .img_text {
+                        position: fixed;
+                        right: 15%;
+                        bottom: 2%;
+                        padding: 10px;
+                        background: #ffffff;
+                        border: 1px solid #333;
                         }
+
+
     </style>
 </head>
 <body>
@@ -70,7 +59,11 @@
 </header>
 <!-- Begin page content -->
 <main role="main" class="container">
-    {% block content %}{% endblock %}
+        <form action="/button/" method="post" enctype="multipart/form-data">
+            {% block content %}{% endblock %}
+            <input class="button_text" type="submit" value="Добавить текст">
+            <input class="img_text" type="submit" value="Добавить изображение">
+        </form>
 </main>
 </body>
 </html>
