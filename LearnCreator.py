@@ -75,7 +75,7 @@ def index():
     lessons = db_sess.query(Lesson).filter(Lesson.title.like(f'%{search_now}%') | Lesson.title.like(
         '%' + str(search_now).capitalize() + '%') | Lesson.title.like(
         '%' + str(search_now).lower() + '%') | Lesson.title.like(
-        '%' + str(search_now).upper() + '%')).order_by(-Lesson.rate, -Lesson.added_to_favorites_count)[
+        '%' + str(search_now).upper() + '%')).order_by(-Lesson.rate, -Lesson.added_to_favorites_count, Lesson.title)[
               FirstResult:limit]
     lessons_now_count = db_sess.query(Lesson).filter(Lesson.title.like(f'%{search_now}%') | Lesson.title.like(
         '%' + str(search_now).capitalize() + '%') | Lesson.title.like(
@@ -319,7 +319,8 @@ def watch_profile(name):
             '%' + str(search_now).capitalize() + '%') | Lesson.title.like(
             '%' + str(search_now).lower() + '%') | Lesson.title.like(
             '%' + str(search_now).upper() + '%'), Lesson.user_id == user.id).order_by(-Lesson.rate,
-                                                                                      -Lesson.added_to_favorites_count)[
+                                                                                      -Lesson.added_to_favorites_count,
+                                                                                      Lesson.title)[
                   FirstResult:limit]
         lessons_now_count = db_sess.query(Lesson).filter(Lesson.title.like(f'%{search_now}%') | Lesson.title.like(
             '%' + str(search_now).capitalize() + '%') | Lesson.title.like(
@@ -329,8 +330,10 @@ def watch_profile(name):
         lessons = db_sess.query(Lesson).filter(Lesson.title.like(f'%{search_now}%') | Lesson.title.like(
             '%' + str(search_now).capitalize() + '%') | Lesson.title.like(
             '%' + str(search_now).lower() + '%') | Lesson.title.like(
-            '%' + str(search_now).upper() + '%'), Lesson.id.in_(favourites_ids)).order_by(-Lesson.rate,
-                                                                                          -Lesson.added_to_favorites_count)[
+            '%' + str(search_now).upper() + '%'),
+                                               Lesson.id.in_(favourites_ids)).order_by(-Lesson.rate,
+                                                                                       -Lesson.added_to_favorites_count,
+                                                                                       Lesson.title)[
                   FirstResult:limit]
         lessons_now_count = db_sess.query(Lesson).filter(Lesson.title.like(f'%{search_now}%') | Lesson.title.like(
             '%' + str(search_now).capitalize() + '%') | Lesson.title.like(
