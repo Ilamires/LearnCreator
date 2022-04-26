@@ -26,6 +26,9 @@
     <div style="padding-left: 10px">
         Дата написания - {{item.created_date}}
     </div>
+    <div style="padding-left: 10px">
+        Добавлено в избранное: {{item.added_to_favorites_count}} раз
+    </div>
     <div style="float: right; width: 10%; font-size: 21px; padding-right: 20px" align="right">
         {% if item.rates_count>0%}
         {{item.rate}} &#9733
@@ -33,12 +36,20 @@
         - &#9733
         {% endif %}
     </div>
+    {% if current_user.is_authenticated and item.user_id != current_user.id%}
     <div>
         <form action="/estimate/{{ item.id }}" method="post" enctype="multipart/form-data">
             <input class="rate_text" type="submit" value="оценить">
+            <div style="float: right; width: 5%">{{ search.estimate(class="form-control")}}</div>
+            {% for error in search.search.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+            {% endfor %}
         </form>
     </div>
-    <div class="text3" style="font-size: 21px; padding-left: 10px">
+    {% endif %}
+    <div class="text3" style="font-size: 25px; padding-left: 10px">
         <div>
             <a href="/lesson/{{ item.id }}">Посмотреть</a>
             {% if current_user.is_authenticated and current_user.id!=item.user_id%}
@@ -52,10 +63,10 @@
     </div>
 </div>
 {% endfor %}
-{% if lessons_now_count>limit%}
-<a href="/limit">{{ search.further(type="submit", class="btn btn-primary") }}</a>
-{% endif %}
 {% if FirstResult>0%}
 <a href="/back">{{ search.back(type="submit", class="btn btn-primary") }}</a>
+{% endif %}
+{% if lessons_now_count>limit%}
+<a href="/limit">{{ search.further(type="submit", class="btn btn-primary") }}</a>
 {% endif %}
 {% endblock %}

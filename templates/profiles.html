@@ -23,13 +23,6 @@
     <div style="padding-left: 10px">
         Дата создания аккаунта - {{item.created_date}}
     </div>
-    <div style="float: right; width: 5%; font-size: 21px; padding-right: 20px" align="right">
-        {% if item.rates_count>0%}
-        {{item.rate}} &#9733
-        {% else %}
-        - &#9733
-        {% endif %}
-    </div>
     <div style="font-size: 21px; padding-left: 10px">
         уроков создано: {{item.created_lessons_count}}, в избранное добавлено: {{item.favourites_lessons_count}}
     </div>

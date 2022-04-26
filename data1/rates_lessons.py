@@ -4,8 +4,8 @@ from sqlalchemy import orm
 from .db_session import SqlAlchemyBase
 
 
-class Rates(SqlAlchemyBase):
-    __tablename__ = 'rates'
+class LessonsRates(SqlAlchemyBase):
+    __tablename__ = 'lessons_rates'
 
     id = sqlalchemy.Column(sqlalchemy.Integer,
                            primary_key=True, autoincrement=True)

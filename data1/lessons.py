@@ -1,8 +1,6 @@
 import datetime
 import sqlalchemy
-import json
 from sqlalchemy import orm
-
 from .db_session import SqlAlchemyBase
 
 
@@ -26,6 +24,3 @@ class Lesson(SqlAlchemyBase):
 
     def __repr__(self):
         return f'<Lessons> {self.id} {self.user.name}, {self.title}: "{self.content}", {self.created_date}'
-
-    def loads_json(self):
-        return json.loads(Lesson.rates)

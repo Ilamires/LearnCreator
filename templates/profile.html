@@ -20,7 +20,7 @@
 </div>
 <div style="padding-top: 40px">
     {% for item in lessons%}
-    <div class="col-md6 border rounded" style="float: right; width: 55%">
+    <div class="col-md6 border rounded" style="float: right; width: 70%">
         <h2 style="float: left; width: 50%; padding-left: 10px">{{item.title}}</h2>
         <h3 style="float: right; width: 50%; padding-right: 20px" align="right">
             <a href="/profile/{{ item.user.name }}" class="url1">{{item.user.name}}</a>
@@ -28,14 +28,30 @@
         <div style="float:left; width: 100%; padding-left: 10px">
             {{item.content}}
         </div>
-        <div style="float: right; width: 10%; font-size: 21px; padding-right: 20px" align="right">
+        <div style="padding-left: 10px">
+            Дата написания - {{item.created_date}}
+        </div>
+        <div style="float: right; width: 14.1%; font-size: 21px; padding-right: 20px" align="right">
             {% if item.rates_count>0%}
             {{item.rate}} &#9733
             {% else %}
             - &#9733
             {% endif %}
         </div>
-        <div class="text3" style="font-size: 21px; padding-left: 10px; width: 80%">
+        {% if current_user.is_authenticated and item.user_id != current_user.id%}
+        <div>
+            <form action="/estimate_profile/{{ item.id }}" method="post" enctype="multipart/form-data">
+                <input class="rate_text" type="submit" value="оценить">
+                <div style="float: right; width: 5%">{{ search.estimate(class="form-control")}}</div>
+                {% for error in search.search.errors %}
+                <p class="alert alert-danger" role="alert">
+                    {{ error }}
+                </p>
+                {% endfor %}
+            </form>
+        </div>
+        {% endif %}
+        <div class="text3" style="font-size: 25px;  padding-left: 10px; width: 80%">
             <a href="/lesson/{{ item.id }}">Посмотреть</a>
             {% if current_user.is_authenticated and current_user.id!=item.user_id%}
             {% if item.id in my_favourites_ids%}
@@ -47,11 +63,11 @@
         </div>
     </div>
     {% endfor %}
-    {% if lessons_now_count>limit%}
-    <a href="/limit_profile">{{ search.further(type="submit", class="btn btn-primary") }}</a>
-    {% endif %}
     {% if FirstResult>0%}
     <a href="/back_profile">{{ search.back(type="submit", class="btn btn-primary") }}</a>
+    {% endif %}
+    {% if lessons_now_count>limit%}
+    <a href="/limit_profile">{{ search.further(type="submit", class="btn btn-primary") }}</a>
     {% endif %}
 </div>
 {% endblock %}
