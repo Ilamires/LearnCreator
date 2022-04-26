@@ -1,9 +1,10 @@
 from flask import Flask, render_template, redirect, request
-import json
+from bs4 import BeautifulSoup
 from data1 import db_session
 from forms.user import RegisterForm, LoginForm
 from forms.search import SearchForm
-from forms.lesson import Content, Arr, Image
+from forms.lesson import Content, Arr, Image_c
+from PIL import Image
 from data1.users import User
 from data1.lessons import Lesson
 from data1.favourites import Favourites
@@ -16,6 +17,9 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+MAXSIZE = (1028, 1028)
+global arr_content
 lessons_now_count = 0
 rates = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
 
@@ -61,7 +65,8 @@ def load_user(user_id):
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
-    global limit, FirstResult, search_now, lessons_now_count
+    global limit, FirstResult, search_now, lessons_now_count, arr_content
+    arr_content = Arr()
     db_sess = db_session.create_session()
     search = SearchForm()
     favourites_ids = []
@@ -348,37 +353,98 @@ def watch_profile(name):
 def watch_lesson(id):
     db_sess = db_session.create_session()
     lesson = db_sess.query(Lesson).filter(Lesson.id == id).first()
-    return render_template('lesson.html', lesson=lesson)
+    a = """<!doctype html>
+                <html lang="en">
+                <head>
+                    <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+                    <link rel="stylesheet"
+                          href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+                          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+                          crossorigin="anonymous">
+                        <title>http://127.0.0.1:5000</title>""" + """
+                        <style>
+                            .text3 {
+                                            word-spacing: 20px
+                                            }
+                            .text4 {
+                                            padding-bottom: 5px
+                                            }
+                        </style>
+                </head>
+                <body>
+                    <header>
+                        <nav class ="navbar navbar-light bg-light">
+                            <a class ="navbar-brand" href="/main" >Главная страница </a>
+                            <a class ="navbar-brand" href="/authors" >Авторы</a>"""
+    if current_user.is_authenticated:
+        a += """<a class ="navbar-brand" href="/create_lesson">Создать урок</a>
+                <div class ="text3">
+                <a class ="navbar-brand" href="/profile/""" + current_user.name + """">""" + current_user.name + """</a>
+                <a class ="btn btn-danger" href="/logout">Выйти</a>
+                </div>"""
+    else:
+        a += """<div class ="text4" >
+                <a class ="btn btn-primary" href="/register" > Зарегистрироваться </a>
+                <a class ="btn btn-success" href="/login"> Войти </a>
+                </div>"""
+    a += """</nav>
+                </header>
+                <main role = "main" class ="container" >
+                <h1 align="center">""" + lesson.title + """</h1>""" + lesson.content + """</main>
+                </body>
+                </html>"""
+    return a
 
 
 @app.route('/create_lesson')
-@login_required
 def edit_lesson():
-    return render_template('content.html', title='создание новости')
+    return render_template('content.html', title='создание урока')
 
 
 @app.route('/button/', methods=['GET', 'POST'])
 def create_lesson():
-    arr_content = Arr()
-    if request.method == 'POST':
-        print(str(request.form) + "------------------- POST")
-        for i in range(len(arr_content.arr)):
-            if arr_content.arr[i].type != "img":
-                arr_content.arr[i].text.data = request.form['text' + str(i)]
-            else:
-                if arr_content.arr[i].img_name == "":
-                    file = request.files["file" + str(i)]
-                    if file.filename != "":
-                        arr_content.arr[i].img_name = "img/" + str(file.filename)
-                        print(arr_content.arr[i].img_name)
-                        file.save("static/img/" + str(file.filename))
-        img = Image()
+    global arr_content
+    button = request.form["parameter"]
+    commit()
+    if button == "img":
+        img = Image_c()
         img.img.name = "file" + str(len(arr_content.arr))
         arr_content.arr.append(img)
+    elif button == "text":
         content = Content()
         content.text.name = "text" + str(len(arr_content.arr))
         arr_content.arr.append(content)
+    elif button == "final":
+        db_sess = db_session.create_session()
+        content = render_template('content.html', title='создание урока', content=arr_content.arr)
+        soup = BeautifulSoup(content, 'html.parser')
+        content = str(soup.find('div', {'class': '1223'}))
+        lesson = Lesson(
+            title='FinalTest',
+            content=content
+        )
+        db_sess.add(lesson)
+        db_sess.commit()
+        return redirect('/')
     return render_template('content.html', title='создание новости', content=arr_content.arr)
+
+
+def commit():
+    global arr_content
+    print(str(request.form) + "------------------- POST")
+    for i in range(len(arr_content.arr)):
+        if arr_content.arr[i].type != "img":
+            arr_content.arr[i].text.data = request.form['text' + str(i)]
+        else:
+            if arr_content.arr[i].img_name == "":
+                file = request.files["file" + str(i)]
+                if file.filename != "":
+                    file.save("static/img/" + str(file.filename))
+                    img = Image.open("static/img/" + str(file.filename))
+                    arr_content.arr[i].img_name = "img/" + str(file.filename)
+                    img.thumbnail(MAXSIZE)
+                    img.save("static/img/" + str(file.filename))
 
 
 def main():
