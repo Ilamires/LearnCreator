@@ -1,4 +1,5 @@
 from flask import Flask, render_template, redirect, request
+import json
 from data1 import db_session
 from forms.user import RegisterForm, LoginForm
 from forms.search import SearchForm
@@ -24,6 +25,32 @@ def start_parameters():
 
 
 search_now, user_now, FirstResult, limit = start_parameters()
+
+
+def estimating(id, url):
+    search = SearchForm()
+    if search.estimate.data in rates:
+        db_sess = db_session.create_session()
+        lesson = db_sess.query(Lesson).filter(Lesson.id == id).first()
+        users_rates = [x.user_id for x in
+                       db_sess.query(LessonsRates.user_id).filter(LessonsRates.lesson_id == id).distinct()]
+        if current_user.id not in users_rates:
+            new_rate = LessonsRates(
+                lesson_id=id,
+                user_id=current_user.id,
+                rate=search.estimate.data
+            )
+            db_sess.add(new_rate)
+            lesson.rates_count += 1
+        else:
+            new_rate = db_sess.query(LessonsRates).filter(LessonsRates.lesson_id == id,
+                                                          LessonsRates.user_id == current_user.id).first()
+            new_rate.rate = search.estimate.data
+        lesson_rates = [x.rate for x in
+                        db_sess.query(LessonsRates.rate).filter(LessonsRates.lesson_id == id).distinct()]
+        lesson.rate = round(sum(lesson_rates) / len(lesson_rates), 2)
+        db_sess.commit()
+    return redirect(url)
 
 
 @login_manager.user_loader
@@ -113,56 +140,12 @@ def back_profile():
 
 @app.route('/estimate/<int:id>', methods=['GET', 'POST'])
 def estimate(id):
-    search = SearchForm()
-    if search.estimate.data in rates:
-        db_sess = db_session.create_session()
-        lesson = db_sess.query(Lesson).filter(Lesson.id == id).first()
-        users_rates = [x.user_id for x in
-                       db_sess.query(LessonsRates.user_id).filter(LessonsRates.lesson_id == id).distinct()]
-        if current_user.id not in users_rates:
-            new_rate = LessonsRates(
-                lesson_id=id,
-                user_id=current_user.id,
-                rate=search.estimate.data
-            )
-            db_sess.add(new_rate)
-            lesson.rates_count += 1
-        else:
-            new_rate = db_sess.query(LessonsRates).filter(LessonsRates.lesson_id == id,
-                                                          LessonsRates.user_id == current_user.id).first()
-            new_rate.rate = search.estimate.data
-        lesson_rates = [x.rate for x in
-                        db_sess.query(LessonsRates.rate).filter(LessonsRates.lesson_id == id).distinct()]
-        lesson.rate = round(sum(lesson_rates) / len(lesson_rates), 2)
-        db_sess.commit()
-    return redirect('/')
+    return estimating(id, '/')
 
 
 @app.route('/estimate_profile/<int:id>', methods=['GET', 'POST'])
 def estimate_profile(id):
-    search = SearchForm()
-    if search.estimate.data in rates:
-        db_sess = db_session.create_session()
-        lesson = db_sess.query(Lesson).filter(Lesson.id == id).first()
-        users_rates = [x.user_id for x in
-                       db_sess.query(LessonsRates.user_id).filter(LessonsRates.lesson_id == id).distinct()]
-        if current_user.id not in users_rates:
-            new_rate = LessonsRates(
-                lesson_id=id,
-                user_id=current_user.id,
-                rate=search.estimate.data
-            )
-            db_sess.add(new_rate)
-            lesson.rates_count += 1
-        else:
-            new_rate = db_sess.query(LessonsRates).filter(LessonsRates.lesson_id == id,
-                                                          LessonsRates.user_id == current_user.id).first()
-            new_rate.rate = search.estimate.data
-        lesson_rates = [x.rate for x in
-                        db_sess.query(LessonsRates.rate).filter(LessonsRates.lesson_id == id).distinct()]
-        lesson.rate = round(sum(lesson_rates) / len(lesson_rates), 2)
-        db_sess.commit()
-    return redirect(f'/profile/{user_now}')
+    return estimating(id, f'/profile/{user_now}')
 
 
 @app.route('/main')
@@ -323,10 +306,14 @@ def watch_profile(name):
     user = db_sess.query(User).filter(User.name == name).first()
     user_now = user.name
     db_sess = db_session.create_session()
+
+    my_favourites_ids = []
+    if current_user.is_authenticated:
+        my_favourites_ids = [x.lesson_id for x in
+                             db_sess.query(Favourites.lesson_id).filter(
+                                 Favourites.user_id == current_user.id).distinct()]
     favourites_ids = [x.lesson_id for x in
                       db_sess.query(Favourites.lesson_id).filter(Favourites.user_id == user.id).distinct()]
-    my_favourites_ids = [x.lesson_id for x in
-                         db_sess.query(Favourites.lesson_id).filter(Favourites.user_id == current_user.id).distinct()]
     if profile == 'your_lessons':
         lessons = db_sess.query(Lesson).filter(Lesson.title.like(f'%{search_now}%') | Lesson.title.like(
             '%' + str(search_now).capitalize() + '%') | Lesson.title.like(
