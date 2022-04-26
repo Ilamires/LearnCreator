@@ -36,6 +36,8 @@
                         }
 
 
+
+
     </style>
 </head>
 <body>
@@ -53,13 +55,12 @@
         {% endif %}
     </nav>
 </header>
-<!-- Begin page content -->
 <main role="main" class="container">
-        <form action="/button/" method="post" enctype="multipart/form-data">
-            {% block content %}{% endblock %}
-            <input class="button_text" type="submit" value="Добавить текст">
-            <input class="img_text" type="submit" value="Добавить изображение">
-        </form>
+    <form action="/button/" method="post" enctype="multipart/form-data">
+        {% block content %}{% endblock %}
+        <button class="img_text" type="submit" name="parameter" value="img">Добавить изображение</button>
+        <button class="button_text" type="submit" name="parameter" value="text">Добавить текст</button>
+    </form>
 </main>
 </body>
 </html>

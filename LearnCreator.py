@@ -5,9 +5,10 @@ from data1 import db_session
 from forms.user import RegisterForm, LoginForm
 from data1.users import User
 from data1.lessons import Lesson
-from forms.lesson import Content, Arr, Image
+from forms.lesson import Content, Arr, Image_c
 from wtforms import StringField, TextAreaField
 import datetime
+from PIL import Image
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
 UPLOAD_FOLDER = '/static/img/'
@@ -19,6 +20,9 @@ app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+MAXSIZE = (1028, 1028)
+global arr_content
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -28,6 +32,8 @@ def load_user(user_id):
 
 @app.route("/")
 def index():
+    global arr_content
+    arr_content = Arr()
     db_sess = db_session.create_session()
     if current_user.is_authenticated:
         lessons = db_sess.query(Lesson).filter(
@@ -92,26 +98,35 @@ def edit_news():
 
 @app.route('/button/', methods=['GET', 'POST'])
 def create_lesson():
-    arr_content = Arr()
-    if request.method == 'POST':
-        print(str(request.form) + "------------------- POST")
-        for i in range(len(arr_content.arr)):
-            if arr_content.arr[i].type != "img":
-                arr_content.arr[i].text.data = request.form['text' + str(i)]
-            else:
-                if arr_content.arr[i].img_name == "":
-                    file = request.files["file" + str(i)]
-                    if file.filename != "":
-                        arr_content.arr[i].img_name = "img/" + str(file.filename)
-                        print(arr_content.arr[i].img_name)
-                        file.save("static/img/" + str(file.filename))
-        img = Image()
+    global arr_content
+    button = request.form["parameter"]
+    commit()
+    if button == "img":
+        img = Image_c()
         img.img.name = "file" + str(len(arr_content.arr))
         arr_content.arr.append(img)
+    elif button == "text":
         content = Content()
         content.text.name = "text" + str(len(arr_content.arr))
         arr_content.arr.append(content)
     return render_template('content.html', title='создание новости', content=arr_content.arr)
+
+
+def commit():
+    global arr_content
+    print(str(request.form) + "------------------- POST")
+    for i in range(len(arr_content.arr)):
+        if arr_content.arr[i].type != "img":
+            arr_content.arr[i].text.data = request.form['text' + str(i)]
+        else:
+            if arr_content.arr[i].img_name == "":
+                file = request.files["file" + str(i)]
+                if file.filename != "":
+                    file.save("static/img/" + str(file.filename))
+                    img = Image.open("static/img/" + str(file.filename))
+                    arr_content.arr[i].img_name = "img/" + str(file.filename)
+                    img.thumbnail(MAXSIZE)
+                    img.save("static/img/" + str(file.filename))
 
 
 def main():
