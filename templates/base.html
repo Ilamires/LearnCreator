@@ -53,11 +53,12 @@
                         font-size: 23px;
                         align: left
                         }
+
     </style>
 </head>
 <body>
 <header>
-    <nav class="navbar navbar-light bg-light">
+    <nav class="navbar navbar-light bg-light" style="position: fixed; width: 100%">
         <a class="navbar-brand" href="/main">Главная страница</a>
         <a class="navbar-brand" href="/authors">Авторы</a>
         {% if current_user.is_authenticated %}
@@ -74,6 +75,8 @@
         {% endif %}
     </nav>
 </header>
+<br>
+<br>
 <!-- Begin page content -->
 <main role="main" class="container">
     {% block content %}{% endblock %}

@@ -27,7 +27,10 @@
         </h3>
         <div style="float:left; width: 100%; padding-left: 10px">
             Дата написания - {{item.created_date}}
-        </div><br>
+        </div>
+        <div style="padding-left: 10px">
+            Добавлено в избранное: {{item.added_to_favorites_count}} раз
+        </div>
         <div style="float: right; width: 14.1%; font-size: 21px; padding-right: 20px" align="right">
             {% if item.rates_count>0%}
             {{item.rate}} &#9733

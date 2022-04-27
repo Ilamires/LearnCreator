@@ -54,7 +54,7 @@
 </head>
 <body>
 <header>
-    <nav class="navbar navbar-light bg-light">
+    <nav class="navbar navbar-light bg-light" style="position: fixed; width: 100%">
         <a class="navbar-brand" href="/main">Главная страница</a>
         <a class="navbar-brand" href="/authors">Авторы</a>
         {% if current_user.is_authenticated %}
@@ -71,6 +71,9 @@
         {% endif %}
     </nav>
 </header>
+<br>
+<br>
+<br>
 <main role="main" class="container">
     <form action="/button/" method="post" enctype="multipart/form-data" class="form">
         <div class="1223">{% block content %}{% endblock %}</div>
