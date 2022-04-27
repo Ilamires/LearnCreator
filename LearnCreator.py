@@ -422,7 +422,8 @@ def create_lesson():
         content = str(soup.find('div', {'class': '1223'}))
         lesson = Lesson(
             title='FinalTest',
-            content=content
+            content=content,
+            user_id=current_user.id
         )
         db_sess.add(lesson)
         db_sess.commit()
